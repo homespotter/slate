@@ -1,0 +1,7 @@
+version: '3.4'
+services:
+  slate:
+    image: com.homespotter.slate:latest
+    command: serve -s build -l 8080
+    ports:
+      - "80:8080"
