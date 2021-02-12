@@ -16,5 +16,5 @@ build-prod:
 		.
 
 push-prod: aws-login
-	docker tag com.homespotter.ccc:staging 769352775470.dkr.ecr.us-east-1.amazonaws.com/slate:latest
+	docker tag com.homespotter.slate:latest 769352775470.dkr.ecr.us-east-1.amazonaws.com/slate:latest
 	docker push 769352775470.dkr.ecr.us-east-1.amazonaws.com/slate:latest
