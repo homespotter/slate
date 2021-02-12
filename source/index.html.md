@@ -120,12 +120,12 @@ The new, sold, and reducedprice status are indicated by a banner on the ad creat
 
 Ad creative options can be supplied for a new or existing listing, in the case of a new listing it is required to provide an img_url and listing_url.
 
-| Status        | default              | Description                                                                                              |
-| ------------- | -------------------- | -------------------------------------------------------------------------------------------------------- |
-| banner_color  | 00a567 (Boost Green) | The hexadecimal color of the banner which displays the status. # can be omitted, or url encode the value |
-| broker_name   | Boost By HomeSpotter | The name of the broker to use on the ad creative.                                                        |
-| listing_url\* | none                 | The URL where a user will be taken once they click on the ad.                                            |
-| img_url\*     | none                 | The URL to the featured image for the property. Used as the image on the ad.                             |
+| Status        | default              | Description                                                                                               |
+| ------------- | -------------------- | --------------------------------------------------------------------------------------------------------- |
+| banner_color  | 00a567 (Boost Green) | The hexadecimal color of the banner which displays the status. # can be omitted, or url encode the value. |
+| broker_name   | Boost By HomeSpotter | The name of the broker to use on the ad creative.                                                         |
+| listing_url\* | none                 | The URL where a user will be taken once they click on the ad.                                             |
+| img_url\*     | none                 | The URL to the featured image for the property. Used as the image on the ad.                              |
 
 <aside class="notice">
   * Required when its not an existing listing.
@@ -372,3 +372,11 @@ The details endpoint provides a report of the campaigns for the agent in the tok
   "rows": "1"
 }
 ```
+
+## Update Listing Endpoint
+
+This will update the given summary based on the provided mls_id and zip with the other provided params. Right now any agent id passed into the token will work to update any listing, it doesn't have to be the agent that created the listing. The customer id has to be the same as the one that created the listing though.
+
+All of the values that are used to create the summary can be updated, only exceptions are mls_id and zip which are used to determine which listing you want to change.
+
+> http://boost.homespotter.com/dashboard/integration/update/$partner_short_code?token=$token&mls_id=785773599&zip=55401&price=99999
