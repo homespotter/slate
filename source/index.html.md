@@ -80,7 +80,7 @@ The base url for campaign creation is as follows, note your partner short code w
 </aside>
 
 
-## Campaign Creation
+## Listing Campaign Creation
 
 There are slighty different query params for the listing and user depending on if HomeSpotter has a record for them respectively.
 
@@ -95,7 +95,7 @@ The base url for campaign creation is as follows, note your partner short code w
 When HomeSpotter has the information on a listing you can just use the mls id and zip, otherwise refer to the following table for dynamically created listings.
 
 ```shell
-  curl get "http://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code> \
+  curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code> \
   -d token=<token> \
   -d mls_id=abc123 \
   -d zip=55405
@@ -107,7 +107,7 @@ When HomeSpotter has the information on a listing you can just use the mls id an
 | zip\*       | The zip code of the listing to be advertised |
 
 ```shell
-  curl get "http://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3"
+  curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3"
 ```
 
 #### Listings not in HomeSpotter system
@@ -190,14 +190,14 @@ For an existing agent in HomeSpotter, this integration can log them into their B
 `GET https://boost.homespotter.com/dashboard/integration/dashboard/<partner_short_code>?token=JWT_TOKEN`
 
 ## Update Listing Endpoint
-> http://boost.homespotter.com/dashboard/integration/update/$partner_short_code?token=$token&mls_id=785773599&zip=55401&price=99999
+> https://boost.homespotter.com/dashboard/integration/update/$partner_short_code?token=$token&mls_id=785773599&zip=55401&price=99999
 
 This will update the given summary based on the provided mls_id and zip with the other provided params. Right now any agent id passed into the token will work to update any listing, it doesn't have to be the agent that created the listing. The customer id has to be the same as the one that created the listing though.
 
 All of the values that are used to create the summary can be updated, only exceptions are mls_id and zip which are used to determine which listing you want to change.
 
 ## Daily Stats Campaign Details Endpoint
-> http://boost.homespotter.com/dashboard/integration/dailystats/$partner_short_code/yyyy-mm-dd?token=$token
+> https://boost.homespotter.com/dashboard/integration/dailystats/$partner_short_code/yyyy-mm-dd?token=$token
 
 The dailystats endpoint returns all stats for campaigns that were running on the provided date.
 
@@ -275,7 +275,7 @@ The dailystats endpoint returns all stats for campaigns that were running on the
 ```
 
 ## Campaign Details Endpoint
-> http://boost.homespotter.com/dashboard/integration/details/$partner_short_code?token=$token
+> https://boost.homespotter.com/dashboard/integration/details/$partner_short_code?token=$token
 
 The details endpoint provides a report of the campaigns for the agent in the token.
 
@@ -343,7 +343,54 @@ The details endpoint provides a report of the campaigns for the agent in the tok
 }
 ```
 
+## Check if an agent already exists in Boost
+> https://api.homespotter.com/graphql
 
+To check whether an agent has already been linked to a Boost account, a GraphQL request is used. Note that the server in this case is `api.homespotter.com`.
+
+The `graphql_api_secret_token` used in this request is not the same as the token used for requests to `boost.homespotter.com` and will be provided to you by the Boost team.
+
+> Sample Request
+
+```shell
+curl --request POST \
+  --url https://api.homespotter.com/graphql \
+  --header 'Authorization: Bearer [graphql_api_secret_token]' \
+  --header 'Content-Type: application/json' \
+  --data '{"query":"query Agents($partnerShortCode: String, $partnerAgentId: ID!) {
+    agents(partnerShortCode: $partnerShortCode, partnerAgentId: $partnerAgentId, pagination: {first: 1}) {
+    totalCount
+      list {
+        firstName
+        lastName
+        emailAddress
+      }
+    }
+}
+","variables":{"partnerShortCode":"your partner short code","partnerAgentId":"gi1630340897553"},"operationName":"Agents"}'
+```
+
+> Sample Response
+
+```
+200 OK
+```
+```json
+{
+  "data": {
+    "agents": {
+      "list": [
+        {
+          "emailAddress": "launchpad_1632558874495@email.com",
+          "firstName": "Beth",
+          "lastName": "Rooney"
+        }
+      ],
+      "totalCount": 1
+    }
+  }
+}
+```
 
 # Boost Integration V1
 This integration is meant for partners that have a familiarity with our current Boost Customers.
@@ -393,7 +440,7 @@ The base url for campaign creation is as follows, note your partner short code w
 When HomeSpotter has the information on a listing you can just use the mls id and zip, otherwise refer to the following table for dynamically created listings.
 
 ```shell
-  curl get "http://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code> \
+  curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code> \
   -d token=<token> \
   -d mls_id=abc123 \
   -d zip=55405
@@ -405,7 +452,7 @@ When HomeSpotter has the information on a listing you can just use the mls id an
 | zip       | The zip code of the listing to be advertised |
 
 ```shell
-  curl get "http://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3"
+  curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3"
 ```
 
 #### Listings not in HomeSpotter system
@@ -492,7 +539,7 @@ These params override any existing agent info on the campaign creative so only s
 
 The all endpoint provides a report of all campaigns created via the integration, this includes a rollup and details on each campaign. Any valid agent id can be used in the token.
 
-> http://boost.homespotter.com/dashboard/integration/all/$partner_short_code?token=$token
+> https://boost.homespotter.com/dashboard/integration/all/$partner_short_code?token=$token
 
 ```json
 {
@@ -562,7 +609,7 @@ The all endpoint provides a report of all campaigns created via the integration,
 
 The dailystats endpoint returns all stats for campaigns that were running on the provided date.
 
-> http://boost.homespotter.com/dashboard/integration/dailystats/$partner_short_code/yyyy-mm-dd?token=$token
+> https://boost.homespotter.com/dashboard/integration/dailystats/$partner_short_code/yyyy-mm-dd?token=$token
 
 ```json
 {
@@ -641,7 +688,7 @@ The dailystats endpoint returns all stats for campaigns that were running on the
 
 The details endpoint provides a report of the campaigns for the agent in the token.
 
-> http://boost.homespotter.com/dashboard/integration/details/$partner_short_code?token=$token
+> https://boost.homespotter.com/dashboard/integration/details/$partner_short_code?token=$token
 
 ```json
 {
@@ -713,6 +760,6 @@ This will update the given summary based on the provided mls_id and zip with the
 
 All of the values that are used to create the summary can be updated, only exceptions are mls_id and zip which are used to determine which listing you want to change.
 
-> http://boost.homespotter.com/dashboard/integration/update/$partner_short_code?token=$token&mls_id=785773599&zip=55401&price=99999
+> https://boost.homespotter.com/dashboard/integration/update/$partner_short_code?token=$token&mls_id=785773599&zip=55401&price=99999
 
 
