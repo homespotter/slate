@@ -90,37 +90,39 @@ The base url for campaign creation is as follows, note your partner short code w
 
 ### Query Parameters
 
-#### Existing listings in HomeSpotter system
+#### Create listing ads in HomeSpotter system
 
-When HomeSpotter has the information on a listing you can just use the mls id and zip, otherwise refer to the following table for dynamically created listings.
+When creating a listing ad, give as much information as possible about the listing. 
+Boost will attempt to match the listing to a listing in our system by mls_id + zip or address + city + state.  
+If Boost can't find the listing, then it will attempt to dynamically create the listing. 
+More information is better as they will get used in the ad when available.
 
+Minimum acceptable (Only if listing and agent are known to already be in HomeSpotter system)
 ```shell
-  curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code> \
-  -d token=<token> \
-  -d mls_id=abc123 \
-  -d zip=55405
+curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code> \
+-d token=<token> \
+-d mls_id=abc123 \
+-d zip=55405
 ```
 
-| Parameter | Description                                  |
-| --------- | -------------------------------------------- |
-| mls_id\*    | The MLS ID of the listing to be advertised   |
-| zip\*       | The zip code of the listing to be advertised |
-
+Example where agent is known
 ```shell
   curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3"
 ```
 
-#### Listings not in HomeSpotter system
+Example where agent and listing may not be in HomeSpotter system
+```shell
+  curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3&first_name=Dwight&last_name=Schrute&phone=6126123445"
+```
 
-For listings HomeSpotter does not have information about you must also include the address and can then optionally include any other params found in this list. More information is better as they will get used in the ad when available.
 
 | Parameter | Description                                                      |
 | --------- | ---------------------------------------------------------------- |
 | mls_id\*  | The MLS ID of the listing to be advertised                       |
 | zip\*     | The zip code of the listing to be advertised                     |
 | address\* | The street address of the listing to be advertised               |
-| city      | The city of the listing to be advertised                         |
-| state     | The zip code of the listing to be advertised                     |
+| city      | The city of the listing to be advertised (provide if mls_id is not provided)|
+| state     | The zip code of the listing to be advertised (provide if mls_id is not provided)|
 | country   | The country of the listing                                       |
 | price     | The price of the listing                                         |
 | bed       | The number of beds of the listing                                |
@@ -185,9 +187,42 @@ Ad creative options can be supplied for a new or existing listing, in the case o
   * Required when its not an existing listing.
 </aside>
 
-## Agent Dashboard 
-For an existing agent in HomeSpotter, this integration can log them into their Boost dashboard.
-`GET https://boost.homespotter.com/dashboard/integration/dashboard/<partner_short_code>?token=JWT_TOKEN`
+## Agent Dashboard/Boost Introduction
+For an existing agent in Boost, this integration can log them into their Boost dashboard. 
+For agents that do not have accounts with Boost, they will be forwarded to a Boost Introduction page where they will be able to see the benefits of Boost. 
+The will be able to create a listing or agent promotion ad.  
+In this case, provide as much info about the agent as possible to make the introduction page a more agent specific experience.
+
+Minimum acceptable (Only agents with existing accounts)
+`GET https://DOMAIN/dashboard/integration/dashboard/<partner_short_code>?token=JWT_TOKEN`
+
+Typical use case: The base url for campaign creation is as follows, note your partner short code will get swapped in for the last value in the path.
+If it seems they will want a listing ad, in addition to the the info below, provide any listing information like that provided to the create listing endpoint (
+mls_id, zip, address, city, state, country, price, bed, bath, sqft, desc, latitude, longitude, status, etc).
+`https://DOMAIN/dashboard/integration/dashboard/PARTNER_SHORT_CODE?headline=My%20headline&title=My%20title&description=My%20Description&first_name=FIRST&last_name=LAST&broker_name=BROKER_NAME&phone=PHONE&email=EMAIL&facebook_page_id=FB_PAGE_ID&agent_img=IMG_URL&landing_page_url=LANDING_PAGE_URL&token=JWT_TOKEN`
+
+
+| Status       | Description                       |
+| ------------ | --------------------------------- |
+| first_name\* | The first name of the user (also used in agent creation if necessary).       |
+| last_name\*  | The last name of the user (also used in agent creation if necessary).        |
+| email\*      | The email address of the user (also used in agent creation if necessary).    |
+| phone        | The phone number of the user (also used in agent creation if necessary).     |
+| agent_img    | The image of the user for the ad (also used in agent creation if necessary). |
+| facebook_page_id |  facebook page (MUST BE IN HS BUSINESS MANAGER) to post ad |
+| headline     |  url encoded string to prepopulate ad headline  |
+| title        |  url encoded string to prepopulate ad title |
+| description  |  url encoded string to prepopulate ad description  |
+| broker_name  |  url encoded string of brokerage to be used in ad  |
+| landing_page_url |  url to ad landing page       |
+| mls_agent_id |  url to ad landing page       |
+
+
+<aside class="notice">
+  * denotes a required field.
+</aside>
+
+
 
 ## Update Listing Endpoint
 > https://boost.homespotter.com/dashboard/integration/update/$partner_short_code?token=$token&mls_id=785773599&zip=55401&price=99999
