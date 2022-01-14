@@ -566,6 +566,8 @@ body {
 
     box-sizing: border-box;
 
+    word-break: break-all;
+
     @extend %right-col;
 
     & > p {
