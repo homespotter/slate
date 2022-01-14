@@ -97,23 +97,19 @@ Boost will attempt to match the listing to a listing in our system by mls_id + z
 If Boost can't find the listing, then it will attempt to dynamically create the listing. 
 More information is better as they will get used in the ad when available.
 
-Minimum acceptable (Only if listing and agent are known to already be in HomeSpotter system)
-```shell
-curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code> \
--d token=<token> \
--d mls_id=abc123 \
--d zip=55405
-```
+>Minimum acceptable (Only if listing and agent are known to already be in HomeSpotter system):
 
-Example where agent is known
-```shell
-  curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3"
-```
+>https://DOMAIN/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405
 
-Example where agent and listing may not be in HomeSpotter system
-```shell
-  curl get "https://boost.homespotter.com/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3&first_name=Dwight&last_name=Schrute&phone=6126123445"
-```
+
+>Example where agent is known:
+
+>https://DOMAIN/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3
+
+
+>Example where agent and listing may not be in HomeSpotter system:
+
+>https://DOMAIN/dashboard/integration/campaign/<partner_short_code>?token=<token>&mls_id=abc123&zip=55405&address=1601%20Willow%20Road&status=new&price=299999&bed=2&bath=3&first_name=Dwight&last_name=Schrute&phone=6126123445
 
 
 | Parameter | Description                                                      |
@@ -193,13 +189,15 @@ For agents that do not have accounts with Boost, they will be forwarded to a Boo
 The will be able to create a listing or agent promotion ad.  
 In this case, provide as much info about the agent as possible to make the introduction page a more agent specific experience.
 
-Minimum acceptable (Only agents with existing accounts)
-`GET https://DOMAIN/dashboard/integration/dashboard/<partner_short_code>?token=JWT_TOKEN`
+>Minimum acceptable (Only agents with existing accounts):
 
-Typical use case: The base url for campaign creation is as follows, note your partner short code will get swapped in for the last value in the path.
-If it seems they will want a listing ad, in addition to the the info below, provide any listing information like that provided to the create listing endpoint (
+>https://DOMAIN/dashboard/integration/dashboard/<partner_short_code>?token=JWT_TOKEN
+
+>Typical use case: The base url for campaign creation is as follows, note your partner short code will get swapped in for the last value in the path.
+If it seems they will want a listing ad, in addition to the info below, provide any listing information like that provided to the create listing endpoint (
 mls_id, zip, address, city, state, country, price, bed, bath, sqft, desc, latitude, longitude, status, etc).
-`https://DOMAIN/dashboard/integration/dashboard/PARTNER_SHORT_CODE?headline=My%20headline&title=My%20title&description=My%20Description&first_name=FIRST&last_name=LAST&broker_name=BROKER_NAME&phone=PHONE&email=EMAIL&facebook_page_id=FB_PAGE_ID&agent_img=IMG_URL&landing_page_url=LANDING_PAGE_URL&token=JWT_TOKEN`
+
+>https://DOMAIN/dashboard/integration/dashboard/PARTNER_SHORT_CODE?headline=My%20headline&title=My%20title&description=My%20Description&first_name=FIRST&last_name=LAST&broker_name=BROKER_NAME&phone=PHONE&email=EMAIL&facebook_page_id=FB_PAGE_ID&agent_img=IMG_URL&landing_page_url=LANDING_PAGE_URL&token=JWT_TOKEN
 
 
 | Status       | Description                       |
@@ -215,13 +213,28 @@ mls_id, zip, address, city, state, country, price, bed, bath, sqft, desc, latitu
 | description  |  url encoded string to prepopulate ad description  |
 | broker_name  |  url encoded string of brokerage to be used in ad  |
 | landing_page_url |  url to ad landing page       |
-| mls_agent_id |  url to ad landing page       |
-
 
 <aside class="notice">
   * denotes a required field.
 </aside>
 
+
+To improve the experience for agents you can pass along their agent mls id and/or username.  
+We can accept multiple mls agent identifiers.  
+Append the following parameters indexed starting at 0 (current max is 5 identifiers).
+
+>https://DOMAIN/dashboard/integration/dashboard/PARTNER_SHORT_CODE?first_name=FIRST&last_name=LAST&phone=PHONE&email=EMAIL&token=JWT_TOKEN&partner_mls_org_id0=CRMLS$reso_mls_org_id0=123456&agent_id_at_mls0=9877665&agent_username_at_mls0=akennedy&partner_mls_org_id0=AMLS$reso_mls_org_id0=123488&agent_id_at_mls0=9877444&agent_username_at_mls0=akennedy2
+
+| Status       | Description                       |
+| ------------ | --------------------------------- |
+|partner_mls_org_id[i] | your identifier for the mls, ex CRMLS |
+|reso_mls_org_id[i] | reso id                                  |
+|agent_id_at_mls[i]* | agent mls id                            |
+|agent_username_at_mls[i]* | agent username                    ||
+
+<aside class="notice">
+  * either agent_id_at_mls or agent_username_at_mls is required
+</aside>
 
 
 ## Update Listing Endpoint
