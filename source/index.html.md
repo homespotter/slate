@@ -80,6 +80,27 @@ The base url for campaign creation is as follows, note your partner short code w
 </aside>
 
 
+## Leads+
+The base url for Leads+ is as follows, note your partner short code will get swapped in for the last value in the path.
+If the agent is new and has no Leads+ subscription it will send them to the purchase flow. 
+If they do have a subscription, at this time they will be redirected to their Leads+ dashboard to manage, view leads, etc.
+> https://DOMAIN/dashboard/integration/leads_plus/PARTNER_SHORT_CODE?first_name=FIRST&last_name=LAST&phone=PHONE&email=EMAIL&agent_img=IMG_URL&token=JWT_TOKEN
+
+`GET https://boost.homespotter.com/dashboard/integration/leads_plus/<partner_short_code>`
+
+| Status       | Description                       |
+| ------------ | --------------------------------- |
+| first_name\* | The first name of the user (also used in agent creation if necessary).       |
+| last_name\*  | The last name of the user (also used in agent creation if necessary).        |
+| email\*      | The email address of the user (also used in agent creation if necessary).    |
+| phone        | The phone number of the user (also used in agent creation if necessary).     |
+| agent_img    | The image of the user for the ad (also used in agent creation if necessary). |
+
+<aside class="notice">
+  * denotes a required field.
+</aside>
+
+
 ## Listing Campaign Creation
 
 There are slighty different query params for the listing and user depending on if HomeSpotter has a record for them respectively.
