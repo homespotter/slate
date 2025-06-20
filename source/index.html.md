@@ -832,3 +832,91 @@ All of the values that are used to create the summary can be updated, only excep
 > https://boost.homespotter.com/dashboard/integration/update/$partner_short_code?token=$token&mls_id=785773599&zip=55401&price=99999
 
 
+
+
+# Zapier Integration
+
+## Zapier Webhook API Documentation
+Base URL: https://rest.homespotter.com/zapier_webhook/<br>
+Authentication: API Key (passed in request parameters or body)
+
+🔐 Authentication
+All endpoints require an api_key for authentication. The key must be passed in either:<br>
+•       Query parameters (for GET and DELETE)<br>
+•       Request body (for POST)<br>
+## 📬 Endpoints
+### POST /subscribe
+Description: 
+Creates a new webhook subscription for a Zapier workflow.<br>
+
+```
+curl --location 'https://rest.homespotter.com/zapier_webhook/subscribe' \
+--header 'Content-Type: application/json' \
+--data '{
+	"hook_url": "https://hooks.zapier.com/hooks/catch/123456/abcde",
+	"product_id": "abc123",
+	"api_key": "your_api_key_here"
+}'
+```
+Body:<br/>
+•       api_key: Your API key (required)<br>
+•       hook_url: (required)<br>
+•       product_id: (required)<br>
+
+### DELETE /unsubscribe
+Description: 
+Removes an existing webhook subscription.<br>
+
+```
+curl --location --request DELETE 'https://rest.homespotter.com/zapier_webhook/unsubscribe?api_key=your_api_key_here'<br>
+```
+
+Parameters:<br/>
+•       api_key: Your API key (required)<br>
+
+
+### GET /sample_data
+Description: 
+Returns sample data useful for Zap setup and testing.<br>
+
+```
+curl --location 'https://rest.homespotter.com/zapier_webhook/sample_data?api_key=your_api_key&productId=abc123'
+```
+
+Parameters (Query):<br>
+•       api_key: Your API key (required)<br>
+•       productId: Product identifier (required)<br>
+
+### GET /me
+Description: 
+Validates the provided API key and returns account-related info.<br/>
+
+```
+curl --location 'https://rest.homespotter.com/zapier_webhook/me?api_key=your_api_key_here'
+```
+
+Parameters (Query):<br/>
+•       api_key: Your API key (required)<br/>
+
+### Success Response:
+
+```json
+{
+	"status": "success",
+	"message": ""
+}
+```
+<br/>
+<br/>
+<br/>
+
+### ❗ Error Handling<br>
+<table> <tr><th>Status</th> <th>Code</th><th>Meaning</th><th>Notes</th></tr>
+<tr><td>200</td><td>OK</td><td>Request</td><td>succeeded</td><td></td></tr>
+<tr><td>400</td><td>Bad Request</td><td>Missing or malformed parameters</td><td></td></tr>
+<tr><td>401	<td>Unauthorized</td>	<td>Invalid or missing API key</td><td></td></tr>
+<tr><td>404	<td>Not Found</td>	<td>Endpoint not found or invalid URL</td><td></td></tr>
+<tr><td>500	<td>Server Error</td>	<td>Unexpected issue on server</td><td></td></tr>
+</table>
+
+ 
