@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.environmentPrefix }}-{{ .Values.appName }}-external-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    alb.ingress.kubernetes.io/listen-ports: {{ .Values.ingress.external.alb.listenPorts | quote }}
+    alb.ingress.kubernetes.io/unhealthy-threshold-count: {{ .Values.ingress.external.alb.unhealthyThresholdCount | quote }}
+    alb.ingress.kubernetes.io/success-codes: {{ .Values.ingress.external.alb.successCodes }}
+    alb.ingress.kubernetes.io/target-type: {{ .Values.ingress.external.alb.targetType }}
+    alb.ingress.kubernetes.io/healthcheck-path: {{ .Values.ingress.external.alb.healthcheckPath }}
+    alb.ingress.kubernetes.io/healthcheck-port: {{ .Values.ingress.external.alb.healthcheckPort }}
+
+spec:
+  ingressClassName: {{ .Values.ingress.external.ingressClassName }}
+  rules:
+    {{- range $.Values.hostsExternal }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.ingress.pathPrefix }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.environmentPrefix }}-{{ $.Values.appName }}-service
+                port:
+                  number: {{ $.Values.service.ports.port }}
+    {{- end }}

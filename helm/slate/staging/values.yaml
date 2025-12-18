@@ -1,0 +1,94 @@
+# ------------------------------------------------------------------
+# General
+# ------------------------------------------------------------------
+environmentPrefix: "stg"
+appName: "slate"
+
+# ------------------------------------------------------------------
+# Deployment (Web App)
+# ------------------------------------------------------------------
+revisionHistoryLimit: 1
+replicas: 2
+
+strategy:
+  type: "RollingUpdate"
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+template:
+  spec:
+    topologySpreadConstraints:
+      maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "ScheduleAnyway"
+
+# ------------------------------------------------------------------
+# Containers (Web App)
+# ------------------------------------------------------------------
+containers:
+  imagePullPolicy: "Always"
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  ports:
+    name: http
+    containerPort: 80
+    protocol: TCP
+  volumeMounts: []
+
+# ------------------------------------------------------------------
+# Environment Secret
+# ------------------------------------------------------------------
+# secretName: "hs-activity-feed-secrets"
+
+# ------------------------------------------------------------------
+# Ingresses
+# ------------------------------------------------------------------
+ingress:
+  internal:
+    ingressClassName: "aws-alb-homespotter-slate-internal"
+    alb:
+      listenPorts: '[{"HTTP": 80}, {"HTTPS": 443}]'
+      unhealthyThresholdCount: "3"
+      successCodes: "200,301,302"
+      targetType: "ip"
+      healthcheckPort: "traffic-port"
+      healthcheckPath: "/health"
+      scheme: "internal"
+
+  external:
+    ingressClassName: "aws-alb-homespotter-slate-external"
+    alb:
+      listenPorts: '[{"HTTP": 80}, {"HTTPS": 443}]'
+      unhealthyThresholdCount: "3"
+      successCodes: "200,301,302"
+      targetType: "ip"
+      healthcheckPort: "traffic-port"
+      healthcheckPath: "/health"
+      scheme: "internet-facing"
+
+  pathPrefix: "/"
+
+# ------------------------------------------------------------------
+# Service
+# ------------------------------------------------------------------
+service:
+  type: ClusterIP
+  ports:
+    protocol: TCP
+    port: 80
+    targetPort: 80
+
+# ------------------------------------------------------------------
+# Hosts
+# ------------------------------------------------------------------
+hostsInternal:
+  - "boost-docs.stg.lwolf.com"
+
+hostsExternal:
+  - "boost-docs.stg.lwolf.com"
