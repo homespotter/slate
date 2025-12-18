@@ -39,6 +39,14 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.containers.imagePullPolicy }}
 
+           {{- if .Values.containers.command }}
+          command: {{ toYaml .Values.containers.command | nindent 12 }}
+          {{- end }}
+
+          {{- if .Values.containers.args }}
+          args: {{ toYaml .Values.containers.args | nindent 12 }}
+          {{- end }}
+
           resources:
             requests:
               cpu: {{ .Values.containers.resources.requests.cpu }}

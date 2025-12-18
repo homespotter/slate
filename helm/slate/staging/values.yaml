@@ -28,6 +28,10 @@ template:
 # ------------------------------------------------------------------
 containers:
   imagePullPolicy: "Always"
+
+  command: ["serve"]
+  args: ["-s", "build", "-l", "4567"]
+
   resources:
     requests:
       cpu: 250m
@@ -37,7 +41,7 @@ containers:
       memory: 512Mi
   ports:
     name: http
-    containerPort: 80
+    containerPort: 4567
     protocol: TCP
   volumeMounts: []
 
@@ -53,7 +57,7 @@ ingress:
       successCodes: "200,301,302"
       targetType: "ip"
       healthcheckPort: "traffic-port"
-      healthcheckPath: "/health"
+      healthcheckPath: "/"
       scheme: "internal"
 
   external:
@@ -64,7 +68,7 @@ ingress:
       successCodes: "200,301,302"
       targetType: "ip"
       healthcheckPort: "traffic-port"
-      healthcheckPath: "/health"
+      healthcheckPath: "/"
       scheme: "internet-facing"
 
   pathPrefix: "/"
@@ -77,7 +81,7 @@ service:
   ports:
     protocol: TCP
     port: 80
-    targetPort: 80
+    targetPort: 4567
 
 # ------------------------------------------------------------------
 # Hosts
