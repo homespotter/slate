@@ -39,11 +39,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.containers.imagePullPolicy }}
 
-          # Inject all env vars from Secret (new approach)
-          envFrom:
-            - secretRef:
-                name: {{ .Values.secretName }}
-
           resources:
             requests:
               cpu: {{ .Values.containers.resources.requests.cpu }}
