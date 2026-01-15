@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.environmentPrefix }}-{{ .Values.appName }}-app
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.environmentPrefix }}-{{ .Values.appName }}
+
+spec:
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  replicas: {{ .Values.replicas }}
+
+  selector:
+    matchLabels:
+      app: {{ .Values.environmentPrefix }}-{{ .Values.appName }}
+
+  strategy:
+    type: {{ .Values.strategy.type }}
+    rollingUpdate:
+      maxSurge: {{ .Values.strategy.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.strategy.rollingUpdate.maxUnavailable }}
+
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.environmentPrefix }}-{{ .Values.appName }}
+
+    spec:
+      topologySpreadConstraints:
+        - maxSkew: {{ .Values.template.spec.topologySpreadConstraints.maxSkew }}
+          topologyKey: {{ .Values.template.spec.topologySpreadConstraints.topologyKey }}
+          whenUnsatisfiable: {{ .Values.template.spec.topologySpreadConstraints.whenUnsatisfiable }}
+          labelSelector:
+            matchLabels:
+              app: {{ .Values.environmentPrefix }}-{{ .Values.appName }}
+
+      containers:
+        - name: {{ .Values.environmentPrefix }}-{{ .Values.appName }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.containers.imagePullPolicy }}
+
+           {{- if .Values.containers.command }}
+          command: {{ toYaml .Values.containers.command | nindent 12 }}
+          {{- end }}
+
+          {{- if .Values.containers.args }}
+          args: {{ toYaml .Values.containers.args | nindent 12 }}
+          {{- end }}
+
+          resources:
+            requests:
+              cpu: {{ .Values.containers.resources.requests.cpu }}
+              memory: {{ .Values.containers.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.containers.resources.limits.cpu }}
+              memory: {{ .Values.containers.resources.limits.memory }}
+
+          ports:
+            - name: {{ .Values.containers.ports.name }}
+              containerPort: {{ .Values.containers.ports.containerPort }}
+              protocol: {{ .Values.containers.ports.protocol }}
