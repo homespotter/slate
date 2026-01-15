@@ -88,6 +88,8 @@ service:
 # ------------------------------------------------------------------
 hostsInternal:
   - "boost-docs.lwolf.com"
+  - "docs.homespotter.com"
 
 hostsExternal:
   - "boost-docs.lwolf.com"
+  - "docs.homespotter.com"
